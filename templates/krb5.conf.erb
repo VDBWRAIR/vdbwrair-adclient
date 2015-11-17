@@ -1,0 +1,48 @@
+###################################
+#
+# This file is managed by Puppet
+#
+###################################
+
+[logging]
+ default = FILE:/var/log/krb5libs.log
+
+[libdefaults]
+ default_realm = <%= @smb_realm.upcase %>
+ dns_lookup_realm = false
+ dns_lookup_kdc = false
+ ticket_lifetime = 24h
+ renew_lifetime = 7d
+ forwardable = true
+ allow_weak_crypto = 1
+ default_keytab_name = FILE:<%= @smb_dedicated_keytab_file %>
+
+[realms]
+<%= @smb_realm.upcase %> = {
+  <% @smb_adservers.each do |server| -%>
+  kdc = <%= server %>
+  <% end -%>
+  admin_server = <%= @smb_adservers[0] %>
+  # ---------- PKINIT CAC Section ----------
+  # This stuff should all go into cac module but here for now
+  #pkinit_kdc_hostname = AMEDWRAIRD3001.amed.ds.army.mil
+  #pkinit_identities = PKCS11:/usr/lib64/pkcs11/libcoolkeypk11.so
+  # This specifies the certificate on your CaC that has your Microsoft 
+  # Principal Name in form of EPID@mil
+  #pkinit_cert_match = <SAN>^[0-9]{10}@mil$
+  #pkinit_anchors = FILE:/etc/pki/CA/certs/adcerts.pem
+  #pkinit_eku_checking = kpServerAuth
+  # ---------- END PKINIT ------------------
+ }
+
+[domain_realm]
+ .<%= @smb_realm.downcase %> = <%= @smb_realm.upcase %>
+ <%= @smb_realm.downcase %> = <%= @smb_realm.upcase %>
+
+[appdefaults]
+    autologin = true
+    forward = true
+    encrypt = true
+    forwardable = true
+    krb5_run_aklog = false
+    default_lifetime = 0d 10h 0m 0s

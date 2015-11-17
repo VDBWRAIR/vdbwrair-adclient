@@ -1,0 +1,31 @@
+###################################
+#
+# This file is managed by Puppet
+#
+###################################
+
+[global]
+	workgroup                      = <%= @smb_workgroup.upcase %>
+	password server                = <%= @smb_adservers.join(' ') %>
+	realm                          = <%= @smb_realm.upcase %>
+	security                       = <%= @smb_security %>
+	winbind separator              = <%= @smb_separator %>
+	template shell                 = <%= @smb_template_shell %>
+	winbind use default domain     = <%= @smb_use_default_domain %>
+	winbind offline logon          = <%= @smb_offline_logon %>
+
+	idmap config <%= @smb_workgroup.upcase %>: backend         = <%= @smb_idmap_backend %>
+	idmap config <%= @smb_workgroup.upcase %>: range           = <%= @smb_idmap_range_start %>-<%= @smb_idmap_range_end %>
+	winbind enum users             = <%= @smb_enum_users %>
+	winbind enum groups            = <%= @smb_enum_groups %>
+	kerberos method                = <%= @smb_kerberos_method %>
+	dedicated keytab file          = <%= @smb_dedicated_keytab_file %>
+	idmap uid                      = <%= @smb_idmap_uid_start %>-<%= @smb_idmap_uid_end %>
+	idmap gid                      = <%= @smb_idmap_gid_start %>-<%= @smb_idmap_gid_end %>
+	template homedir               = <%= @smb_template_homedir %>
+	log level                      = <%= @smb_log_level %>
+
+	encrypt passwords              = <%= @smb_encrypt_passwords %>
+	syslog                         = <%= @smb_syslog %>
+    client signing                 = <%= @smb_client_signing %>
+    guest ok                       = <%= @smb_guest_ok %>

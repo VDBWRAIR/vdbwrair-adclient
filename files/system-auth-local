@@ -1,0 +1,60 @@
+#%PAM-1.0
+# Standard STIG'd system-auth-local
+# The way pam works is basically start from the top and work down
+# required means the module runs and is required, but will continue on after
+# requisite means the module runs and is required, and stops at that module
+# optional means the module runs and does not do anything with the actual authentication
+# sufficient means the module runs and if succeeds it is done
+# anything in the brackets like [success=3] means in that module for what is listed it will do what is after the equal
+#   unless it is a number, then means skip the next X lines below this one
+#   aka, [success=3 default=ignore] means if the module succeeds, skip the next 3 pam lines, otherwise ignore the line
+auth        required      pam_env.so
+# Skips the next 3 auth lines if not in service list
+auth        [success=3 default=ignore] pam_succeed_if.so service notin gdm:xdm:kdm:xscreensaver:gnome-screensaver:kscreensaver quiet use_uid
+# Does cac auth
+auth        [success=ok authinfo_unavail=2 ignore=2 default=die] pam_pkcs11.so
+# sets kerberos ticket
+auth        optional      pam_krb5.so use_first_pass no_subsequent_prompt
+# sets username to nobody if auth username is unknown
+auth        sufficient    pam_permit.so
+auth        required      pam_faillock.so authsucc audit deny=3 unlock_time=604800 fail_interval=900
+# Authenticates against /etc/passwd /etc/shadow
+auth        sufficient    pam_unix.so try_first_pass
+auth        [default=die] pam_faillock.so authfail audit deny=3 unlock_time=604800 fail_interval=900
+# Only proceed if uid >= 500
+auth        requisite     pam_succeed_if.so uid >= 500 quiet
+# authenticates against kerberos ticket
+auth        sufficient    pam_krb5.so use_first_pass
+# Authenticates against AD user/pass
+auth        sufficient    pam_winbind.so use_first_pass
+# Denies login because no other way worked
+auth        required      pam_deny.so
+
+account     required      pam_faillock.so fail_interval=900
+account     required      pam_unix.so broken_shadow
+account     sufficient    pam_localuser.so
+account     sufficient    pam_succeed_if.so uid < 500 quiet
+account     [default=bad success=ok auth_err=ignore user_unknown=ignore ignore=ignore] pam_krb5.so
+account     [default=bad success=ok user_unknown=ignore] pam_winbind.so
+account     required      pam_permit.so
+
+# Password lines are for changing passwords so likely these don't matter much
+#  for AD/CAC related
+password    required      pam_cracklib.so retry=3 minlen=14 dcredit=-1 ucredit=-1 ocredit=-1 lcredit=-1 difok=4
+password    sufficient    pam_unix.so sha512 shadow try_first_pass use_authtok
+password    sufficient    pam_krb5.so use_authtok
+password    sufficient    pam_winbind.so use_authtok
+password    required      pam_deny.so
+
+session     optional      pam_keyinit.so revoke
+session     required      pam_limits.so
+session     required      pam_lastlog.so showfailed
+# Creates user home directory when they log in if it doesn't exist
+# I don't know if both should be used or what the deal is, but we have both and
+# it works
+session     optional      pam_winbind.so    mkhomedir
+session     optional      pam_mkhomedir.so
+# Skip pam_unix if we are cron
+session     [success=1 default=ignore] pam_succeed_if.so service in crond quiet use_uid
+session     required      pam_unix.so
+session     optional      pam_krb5.so
