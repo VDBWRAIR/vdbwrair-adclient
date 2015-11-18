@@ -28,7 +28,6 @@ class adclient::params {
     $smb_idmap_uid_end               = 19999
     $smb_idmap_gid_start             = 10000
     $smb_idmap_gid_end               = 19999
-    $use_smartcard                   = false
     $smb_client_signing              = 'mandatory'
     $smb_guest_ok                    = 'no'
 
@@ -65,9 +64,12 @@ class adclient::params {
     # Require GUI
     $gui_packages = [
         'gdm-plugin-smartcard',
-        'gdm',
-        'plymouth-gdm-hooks',
-        'gdm-libs',
-        'authdialog'
+        #'plymouth-gdm-hooks',
+        #'gdm-libs',
     ]
+
+    # Smartcard settings
+    $use_smartcard                   = false
+    # Should be 'CN' => 'samaccountname'
+    $cn_map                          = { }
 }

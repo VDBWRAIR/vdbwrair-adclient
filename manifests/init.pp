@@ -46,7 +46,6 @@ class adclient(
     $non_gui_packages          = $adclient::params::non_gui_packages,
     $gui_packages              = $adclient::params::gui_packages,
     $computerou                = $adclient::params::computerou,
-    $use_smartcard             = $adclient::params::use_smartcard,
     $smb_workgroup             = $adclient::params::smb_workgroup,
     $smb_realm                 = $adclient::params::smb_realm,
     $smb_encrypt_passwords     = $adclient::params::smb_encrypt_passwords,
@@ -71,14 +70,15 @@ class adclient(
     $smb_idmap_gid_start       = $adclient::params::smb_idmap_gid_start,
     $smb_idmap_gid_end         = $adclient::params::smb_idmap_gid_end,
     $smb_client_signing        = $adclient::params::smb_client_signing,
-    $smb_guest_ok              = $adclient::params::smb_guest_ok
+    $smb_guest_ok              = $adclient::params::smb_guest_ok,
+    $use_smartcard             = $adclient::params::use_smartcard,
+    $cn_map                    = $adclient::params::cn_map,
 ) inherits adclient::params {
     include stdlib
 
     validate_string($computerou)
     validate_array($non_gui_packages)
     validate_array($gui_packages)
-    validate_bool($use_smartcard)
     validate_string($smb_workgroup)
     validate_string($smb_realm)
     validate_re($smb_encrypt_passwords, 'yes|no')
@@ -105,13 +105,14 @@ class adclient(
     validate_re($smb_client_signing, 'auto|mandatory|disabled')
     validate_re($smb_guest_ok, 'yes|no')
 
-    if $use_smartcard {
-        notice('use_smartcard does not work yet')
-    }
-
     anchor { 'module::begin': } ->
         class{ 'adclient::install': } ->
         class{ 'adclient::config': } ->
         class{ 'adclient::service': } ->
+        class{ 'adclient::smartcard':
+            use_smartcard => $use_smartcard,
+            gui_packages  => $gui_packages,
+            cn_map        => $cn_map
+        } ->
     anchor { 'module::end': }
 }

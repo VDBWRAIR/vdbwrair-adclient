@@ -1,0 +1,10 @@
+# 
+# This file is managed by puppet. Any changes may be overwritten
+#
+# Entries should be one per line and in the form
+# CACID -> first.last
+# where CACID is the id on the cac under the CN field
+# and first.last is that user's Active Directory samaccountname
+<% @cn_map.each do |cn, aduser| -%>
+<%= cn %> -> <%= aduser %>
+<% end -%>
