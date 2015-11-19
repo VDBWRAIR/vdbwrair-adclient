@@ -16,33 +16,38 @@ Puppet adclient configuration
 
 ## Overview
 
-A one-maybe-two sentence summary of what the module does/what problem it solves.
-This is your 30 second elevator pitch for your module. Consider including
-OS/Puppet version it works with.
+Configures Active Directory authentication as well as smartcard authentication
 
 ## Module Description
 
-If applicable, this section should have a brief description of the technology
-the module integrates with and what that integration enables. This section
-should answer the questions: "What does this module *do*?" and "Why would I use
-it?"
+This module integrates a Linux machine into an Active Directory environment.
+It is only tested with the ARMY setup at this time so probably needs a more general
+workover at some point.
 
-If your module has a range of functionality (installation, configuration,
-management, etc.) this is the time to mention it.
+You can also enable smartcard authentication by setting use_smartcard => true which
+will then setup the kerberos file to utilize pkinit.
+
+Using smartcard authentication requires that you retrieve the certificate chain
+for your domain and place it into files/adcerts.pem. It has to be a pem formatted
+file. You can get this file via any Windows workstation that is already configured
+through the certificate store(you will need to convert those certs to pem format)
 
 ## Setup
 
 ### What adclient affects
 
-* A list of files, packages, services, or operations that the module will alter,
-  impact, or execute on the system it's installed on.
-* This is a great place to stick any warnings.
-* Can be in list or paragraph form.
+* Manages /etc/krb5.conf
+* Manages /etc/samba/smb.conf
+* Manages /etc/pam.d/system-auth{,-ac}
+* Manages /etc/pam.d/password-auth{,-ac}
+* Creates /etc/pki/CA/certs if use_smartcard
+* Manages /etc/pki/nssdb if use_smartcard
+* Manages /etc/pam_pkcs11/\* if use_smartcard
 
 ### Setup Requirements **OPTIONAL**
 
-If your module requires anything extra before setting up (pluginsync enabled,
-etc.), mention it here.
+You have to get and convert your domains certificate chain to pem format and
+put that into a file named adcerts under files in this module
 
 ### Beginning with adclient
 
