@@ -39,20 +39,28 @@ class adclient::smartcard::config inherits adclient::smartcard {
     $pki_dir = '/etc/pki/CA/certs'
     # Only the path of the zip file from the url(last thing after last /)
     $cert_zip = split($adclient::smartcard::cert_url, '/')[-1]
-    notify{"Certificates Zip file: ${cert_zip}":}
+    #notify{"Certificates Zip file: ${cert_zip}":}
     # The dir that gets unpacked is same as zip file but without .zip
     $unpack_dir = regsubst($cert_zip, "^(.*)\.zip$", "\1");
-    notify{"Unpacked certs directory: ${unpack_dir}":}
+    #notify{"Unpacked certs directory: ${unpack_dir}":}
+
+    file { $pki_dir:
+        ensure  => directory,
+        owner   => root,
+        group   => root,
+        mode    => '0755',
+    }
 
     Exec {
         cwd     => $pki_dir,
-        path    => '/bin:/usr/bin'
+        path    => '/bin:/usr/bin',
     }
 
     # Download zip
     exec { "wget ${adclient::smartcard::cert_url}":
         alias   => 'download_cert',
-        creates => "${pki_dir}/${cert_zip}"
+        creates => "${pki_dir}/${cert_zip}",
+        require => File[$pki_dir]
     }
 
     # Unpack zip
@@ -69,9 +77,28 @@ class adclient::smartcard::config inherits adclient::smartcard {
         require => Exec['unpack_cert']
     }
 
+    file { "${pki_dir}/certs.pem":
+        owner   => root,
+        group   => root,
+        mode    => '0644',
+        require => Exec['convert_cert']
+    }
+
     # Import into nssdb
     importcert {"${pki_dir}/certs.pem":
         ensure  => present,
-        require => Exec['convert_cert']
+        require => Exec['convert_cert'],
+        alias   => 'importcert'
+    }
+
+    # Pull AD cert chain
+    # User has to manually get these
+    file {"${pki_dir}/adcerts.pem":
+        owner   => root,
+        group   => root,
+        mode    => '0644',
+        ensure  => present,
+        source  => 'puppet:///modules/adclient/adcerts.pem',
+        require => Importcert['importcert']
     }
 }

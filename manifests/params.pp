@@ -76,4 +76,7 @@ class adclient::params {
     $nssdb_path                      = '/etc/pki/nssdb'
     # URL to zip file of certs
     $cert_url                        = 'http://iasecontent.disa.mil/pki-pke/Certificates_PKCS7_v4.1_DoD.zip'
+    # This has to be able to match your principal name on your cert that
+    # matches in Active Directory
+    $pkinit_cert_match               = '<SAN>^[0-9]{10}@mil$'
 }

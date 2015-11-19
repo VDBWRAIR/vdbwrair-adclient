@@ -23,16 +23,22 @@
   kdc = <%= server %>
   <% end -%>
   admin_server = <%= @smb_adservers[0] %>
+  <% if @use_smartcard -%>
   # ---------- PKINIT CAC Section ----------
-  # This stuff should all go into cac module but here for now
-  #pkinit_kdc_hostname = AMEDWRAIRD3001.amed.ds.army.mil
-  #pkinit_identities = PKCS11:/usr/lib64/pkcs11/libcoolkeypk11.so
+  # We will just use the first AD server
+  pkinit_kdc_hostname = <%= @smb_adservers[0].split('.')[0].upcase %>.<%= @smb_adservers[0].split('.')[1..-1].join('.') %>
+  pkinit_identities = PKCS11:/usr/lib64/pkcs11/libcoolkeypk11.so
   # This specifies the certificate on your CaC that has your Microsoft 
   # Principal Name in form of EPID@mil
-  #pkinit_cert_match = <SAN>^[0-9]{10}@mil$
-  #pkinit_anchors = FILE:/etc/pki/CA/certs/adcerts.pem
-  #pkinit_eku_checking = kpServerAuth
+  pkinit_cert_match = <%= @pkinit_cert_match %>
+  # Smartcard chain
+  pkinit_anchors = FILE:/etc/pki/CA/certs/certs.pem
+  # AD Chain
+  pkinit_anchors = FILE:/etc/pki/CA/certs/adcerts.pem
+  pkinit_eku_checking = kpServerAuth
+  #preferred_preauth_types = 30,31
   # ---------- END PKINIT ------------------
+  <% end -%>
  }
 
 [domain_realm]
