@@ -43,7 +43,7 @@ pam_pkcs11  {
 		# directory must contain an openssl hash-link to each certificate.
 		# The default value is /etc/pam_pkcs11/cacerts.
 		ca_dir = "/etc/pam_pkcs11/cacerts";
-		nss_dir = /etc/pki/nssdb;
+		nss_dir = <%= @nssdb_path %>; #/etc/pki/nssdb;
 
 		# Path to the directory where the CRLs are stored. The directory
 		# must contain an openssl hash-link to each CRL. The default value

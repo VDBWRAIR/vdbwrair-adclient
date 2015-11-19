@@ -73,6 +73,8 @@ class adclient(
     $smb_guest_ok              = $adclient::params::smb_guest_ok,
     $use_smartcard             = $adclient::params::use_smartcard,
     $cn_map                    = $adclient::params::cn_map,
+    $nssdb_path                = $adclient::params::nssdb_path,
+    $cert_url                  = $adclient::params::cert_url
 ) inherits adclient::params {
     include stdlib
 
@@ -112,7 +114,9 @@ class adclient(
         class{ 'adclient::smartcard':
             use_smartcard => $use_smartcard,
             gui_packages  => $gui_packages,
-            cn_map        => $cn_map
+            cn_map        => $cn_map,
+            nssdb_path    => $nssdb_path,
+            cert_url      => $cert_url,
         } ->
     anchor { 'module::end': }
 }

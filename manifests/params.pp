@@ -72,4 +72,8 @@ class adclient::params {
     $use_smartcard                   = false
     # Should be 'CN' => 'samaccountname'
     $cn_map                          = { }
+    # Path to nssdb
+    $nssdb_path                      = '/etc/pki/nssdb'
+    # URL to zip file of certs
+    $cert_url                        = 'http://iasecontent.disa.mil/pki-pke/Certificates_PKCS7_v4.1_DoD.zip'
 }

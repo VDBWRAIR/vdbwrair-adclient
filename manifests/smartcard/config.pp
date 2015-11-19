@@ -34,4 +34,44 @@ class adclient::smartcard::config inherits adclient::smartcard {
             unless  => '/bin/grep -q "id:5" /etc/inittab'
         }
     }
+
+    # PKI Directory to do our work in
+    $pki_dir = '/etc/pki/CA/certs'
+    # Only the path of the zip file from the url(last thing after last /)
+    $cert_zip = split($adclient::smartcard::cert_url, '/')[-1]
+    notify{"Certificates Zip file: ${cert_zip}":}
+    # The dir that gets unpacked is same as zip file but without .zip
+    $unpack_dir = regsubst($cert_zip, "^(.*)\.zip$", "\1");
+    notify{"Unpacked certs directory: ${unpack_dir}":}
+
+    Exec {
+        cwd     => $pki_dir,
+        path    => '/bin:/usr/bin'
+    }
+
+    # Download zip
+    exec { "wget ${adclient::smartcard::cert_url}":
+        alias   => 'download_cert',
+        creates => "${pki_dir}/${cert_zip}"
+    }
+
+    # Unpack zip
+    exec { "unzip ${cert_zip}":
+        alias   => 'unpack_cert',
+        creates => "${pki_dir}/${unpack_dir}",
+        require => Exec['download_cert']
+    }
+
+    # Convert to pem file
+    exec { "openssl pkcs7 -in ${unpack_dir}/${unpack_dir}.pem.p7b -print_certs -out certs.pem":
+        alias   => "convert_cert",
+        creates => "${pki_dir}/certs.pem",
+        require => Exec['unpack_cert']
+    }
+
+    # Import into nssdb
+    importcert {"${pki_dir}/certs.pem":
+        ensure  => present,
+        require => Exec['convert_cert']
+    }
 }
