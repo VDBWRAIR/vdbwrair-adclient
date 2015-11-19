@@ -1,7 +1,7 @@
 {
-  "name": "wrair-adclient",
+  "name": "vdbwrair-adclient",
   "version": "0.1.0",
-  "author": "wrair",
+  "author": "Tyghe Vallard",
   "summary": "adclient config",
   "license": "Apache-2.0",
   "source": "",
