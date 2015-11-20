@@ -101,4 +101,19 @@ class adclient::smartcard::config inherits adclient::smartcard {
         source  => 'puppet:///modules/adclient/adcerts.pem',
         require => Importcert['importcert']
     }
+
+    file {"/etc/pam.d/gdm-smartcard":
+        owner   => root,
+        group   => root,
+        mode    => '0644',
+        ensure  => present,
+        source  => 'puppet:///modules/adclient/gdm-smartcard'
+    }
+    file {"/etc/pam.d/smartcard-ath":
+        owner   => root,
+        group   => root,
+        mode    => '0644',
+        ensure  => present,
+        source  => 'puppet:///modules/adclient/smartcard-auth'
+    }
 }
