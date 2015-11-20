@@ -89,18 +89,17 @@ class profile::adclient::gui inherits profile {
 
 Classes:
 
-    * adclient(#class-adclient)
-    * adclient::smartcard(#class-adclientsmartcard)
+* [adclient](#class-adclient)
+* [adclient::smartcard](#class-adclientsmartcard)
 
 Types:
 
-    * importcert(#type-importcert)
+* [importcert](#type-importcert)
 
 Facts:
 
-    * ad_info(#fact-ad_info)
-    * ad_computer(#fact-ad_computer)
-
+* [ad_info](#fact-ad_info)
+* [ad_computer](#fact-ad_computer)
 
 ### Class: adclient
 
