@@ -4,7 +4,6 @@ class adclient::smartcard::config inherits adclient::smartcard {
         group   => root,
         mode    => '0644',
         content => template('adclient/authconfig.erb'),
-        notify  => Service['gdm']
     }
 
     file { "/etc/pam_pkcs11/pam_pkcs11.conf":
