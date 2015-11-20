@@ -93,4 +93,12 @@ class adclient::config inherits adclient {
         ensure => link,
         target => '/etc/pam.d/password-auth-local'
     }
+    
+    file { "/etc/init.d/winbind":
+        owner   => root,
+        group   => root,
+        mode    => '0755',
+        content => template("${module_name}/winbind.erb"),
+        notify  => Service['winbind']
+    }
 }

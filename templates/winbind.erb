@@ -1,0 +1,120 @@
+#!/bin/sh
+#
+# chkconfig: - 24 73
+# description: Starts and stops the Samba winbind daemon
+#	       #
+# pidfile: /var/run/winbindd.pid
+# config:  /etc/samba/smb.conf
+
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+# Avoid using root's TMPDIR
+unset TMPDIR
+
+# Source networking configuration.
+. /etc/sysconfig/network
+
+# Check that networking is up.
+[ ${NETWORKING} = "no" ] && exit 1
+
+# Check that smb.conf exists.
+[ -f /etc/samba/smb.conf ] || exit 6
+
+[ -f /etc/sysconfig/samba ] && . /etc/sysconfig/samba
+
+RETVAL=0
+
+# Try to wait until we can ping AD Server before
+# returning
+wait_for_link() {
+    timeout=0
+    delay=10
+    while [ $timeout -le $delay ]; do
+        # Ping takes about 5 seconds
+        if ping -c 1 -w 1 -W 1 <%= @smb_adservers[0] %> > /dev/null 2>&1
+        then
+            return 0
+        fi
+        sleep 5
+        timeout=$((timeout+1))
+    done
+    return 1
+}
+
+start() {
+	KIND="Winbind"
+	echo -n $"Starting $KIND services: "
+	wait_for_link
+	LINK=$?
+	daemon winbindd "$WINBINDOPTIONS"
+	[ $LINK -eq 0 ] && RETVAL=$? || RETVAL=$LINK
+	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/winbindd || RETVAL=1
+	echo ""
+	return $RETVAL
+}	
+
+stop() {
+        echo
+	KIND="Winbind"
+	echo -n $"Shutting down $KIND services: "
+	killproc winbindd
+	RETVAL=$?
+	[ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/winbindd
+	echo ""
+	return $RETVAL
+}	
+
+restart() {
+	stop
+	start
+}	
+
+reload() {
+        echo -n $"Reloading smb.conf file: "
+	killproc winbindd -HUP
+	RETVAL=$?
+	echo
+	return $RETVAL
+}	
+
+rhstatus() {
+	status winbindd
+	return $?
+}	
+
+# Allow status as non-root.
+if [ "$1" = status ]; then
+       rhstatus
+       exit $?
+fi
+
+# Check that we are root ... so non-root users stop here
+[  `id -u` -eq  "0" ] ||  exit 4
+
+case "$1" in
+  start)
+  	start
+	;;
+  stop)
+  	stop
+	;;
+  restart)
+  	restart
+	;;
+  reload)
+  	reload
+	;;
+  status)
+  	rhstatus
+	;;
+  condrestart)
+  	[ -f /var/lock/subsys/winbindd ] && restart || :
+	;;
+  *)
+	echo $"Usage: $0 {start|stop|restart|reload|status|condrestart}"
+	exit 2
+esac
+
+exit $?
