@@ -108,7 +108,7 @@ class adclient::smartcard::config inherits adclient::smartcard {
         ensure  => present,
         source  => 'puppet:///modules/adclient/gdm-smartcard'
     }
-    file {"/etc/pam.d/smartcard-ath":
+    file {"/etc/pam.d/smartcard-auth":
         owner   => root,
         group   => root,
         mode    => '0644',
