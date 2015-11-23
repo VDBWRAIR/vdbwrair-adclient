@@ -32,6 +32,12 @@ for your domain and place it into files/adcerts.pem. It has to be a pem formatte
 file. You can get this file via any Windows workstation that is already configured
 through the certificate store(you will need to convert those certs to pem format)
 
+Once the configuration is applied, it will leave a simple shell script under root
+`/root/joindomain.sh` which you can then join the machine to the domain with via
+```
+/root/joindomain.sh ad.admin.account
+```
+
 ## Setup
 
 ### What adclient affects
@@ -61,9 +67,6 @@ them to .pem format.
 Save this file as adcerts.pem in the files directory of this module.
 
 ## Usage
-
-Put the classes, types, and resources for customizing, configuring, and doing
-the fancy stuff with your module here.
 
 ### Simple adclient configuration
 
