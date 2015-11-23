@@ -38,6 +38,9 @@ Once the configuration is applied, it will leave a simple shell script under roo
 /root/joindomain.sh ad.admin.account
 ```
 
+Once the machine is joined to the domain you will need to rerun the puppet agent
+in order for it to correctly configure winbind as well as setting up the machine kerberos ticket.
+
 ## Setup
 
 ### What adclient affects
