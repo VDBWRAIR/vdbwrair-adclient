@@ -18,6 +18,30 @@ class adclient::config inherits adclient {
     if !empty($::ad_info) and !empty($::ad_computer) {
         $line_ensure = 'present'
         $nss_line = 'files winbind'
+
+        # Configure machine to ensure kerberos machine ticket at startup
+        file_line { "machine_kerberos_ticket":
+            ensure => $line_ensure,
+            path   => "/etc/rc.local",
+            line   => "net ads kerberos kinit -P",
+            match_for_absence => true
+        }
+
+        # Schedule cron to renew machine kerb ticket
+        cron { 'machine_kerberos_ticket_renew':
+            ensure      => present,
+            command     => '/usr/bin/net ads kerberos renew -P',
+            hour        => '*/2',
+            minute      => absent,
+            month       => absent,
+            monthday    => absent,
+            weekday     => absent
+        }
+        
+        # Init kerberos ticket now if it isn't already
+        exec { '/usr/bin/net ads kerberos kinit -P':
+            unless => '/usr/bin/klist'
+        }
     } else {
         $line_ensure = 'absent'
         $nss_line = 'files'
@@ -41,14 +65,6 @@ class adclient::config inherits adclient {
         path   => '/etc/nsswitch.conf',
         line   => "group: ${nss_line}",
         match  => '^group:',
-    }
-
-    # Configure machine to ensure kerberos machine ticket at startup
-    file_line { "machine_kerberos_ticket":
-        ensure => $line_ensure,
-        path   => "/etc/rc.local",
-        line   => "net ads kerberos kinit -P",
-        match_for_absence => true
     }
 
     # Configuration for winbind

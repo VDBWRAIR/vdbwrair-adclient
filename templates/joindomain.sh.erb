@@ -5,3 +5,4 @@
 # the computer as
 #
 net ads join -S <%= @smb_adservers[0] %> -U "$1" createcomputer="<%= @computerou %>" osName="<%= @os['name'] %>" osVer="<%= @os['release']['full'] %>"
+net ads kerberos kinit -P
