@@ -79,4 +79,7 @@ class adclient::params {
     # This has to be able to match your principal name on your cert that
     # matches in Active Directory
     $pkinit_cert_match               = '<SAN>^[0-9]{10}@mil$'
+    # This is the path to the adcert.pem file that contains all cert chains
+    # leading from smartcard to AD
+    $adcert_source                     = 'puppet:///modules/adclient/adcerts.pem',
 }

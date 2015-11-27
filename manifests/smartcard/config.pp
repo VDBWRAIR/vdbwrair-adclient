@@ -97,7 +97,7 @@ class adclient::smartcard::config inherits adclient::smartcard {
         group   => root,
         mode    => '0644',
         ensure  => present,
-        source  => 'puppet:///modules/adclient/adcerts.pem',
+        source  => $adclient::smartcard::adcert_source,
         require => Importcert['importcert']
     }
 
