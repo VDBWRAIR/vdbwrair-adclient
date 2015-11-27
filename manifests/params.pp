@@ -81,5 +81,5 @@ class adclient::params {
     $pkinit_cert_match               = '<SAN>^[0-9]{10}@mil$'
     # This is the path to the adcert.pem file that contains all cert chains
     # leading from smartcard to AD
-    $adcert_source                     = 'puppet:///modules/adclient/adcerts.pem',
+    $adcert_source                     = 'puppet:///modules/adclient/adcerts.pem'
 }
