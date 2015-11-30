@@ -43,6 +43,14 @@ class adclient::smartcard::config inherits adclient::smartcard {
     $unpack_dir = regsubst($cert_zip, "^(.*)\.zip$", "\1");
     #notify{"Unpacked certs directory: ${unpack_dir}":}
 
+    file { $adclient::smartcard::nssdb_path:
+        ensure  => directory,
+        owner   => root,
+        group   => root,
+        mode    => 'u+rwX,go+rX',
+        recurse => true
+    }
+
     file { $pki_dir:
         ensure  => directory,
         owner   => root,
