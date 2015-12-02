@@ -79,8 +79,8 @@ class adclient::config inherits adclient {
 
     # Create smb_template_path up to the last component 
     $workgroup = split($::domain, '\.')[0].upcase
-    $pth = regsubstr(
-                regsubst($smb_template_path, '%D', $workgroup),
+    $pth = regsubst(
+                regsubst($smb_template_homedir, '%D', $workgroup),
                 '%U', ''
     )
     exec {"create_$pth":
