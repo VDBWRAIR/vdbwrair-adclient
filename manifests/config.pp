@@ -77,6 +77,17 @@ class adclient::config inherits adclient {
         notify  => Service['winbind']
     }
 
+    # Create smb_template_path up to the last component 
+    $workgroup = split($::domain, '\.')[0].upcase
+    $pth = regsubstr(
+                regsubst($smb_template_path, '%D', $workgroup),
+                '%U', ''
+    )
+    exec {"create_$pth":
+        command     => "/bin/mkdir -p ${pth}",
+        unless      => "/usr/bin/test -d ${pth}"
+    }
+
     # Configuration for kerberos
     file { "/etc/krb5.conf":
         ensure  => 'file',
