@@ -85,7 +85,8 @@ class adclient::config inherits adclient {
     )
     exec {"create_$pth":
         command     => "/bin/mkdir -p ${pth}",
-        unless      => "/usr/bin/test -d ${pth}"
+        unless      => "/usr/bin/test -d ${pth}",
+        umask       => "0066",
     }
 
     # Configuration for kerberos
