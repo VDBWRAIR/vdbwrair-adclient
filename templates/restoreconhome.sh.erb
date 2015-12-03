@@ -2,7 +2,9 @@
 #
 # Script that will be run by pam_exec to ensure that
 # homedirs have correct selinux context
+# This script uses getent as the home dir may be provided via winbind or other
+# external mechanism
 
-cmd="/sbin/restorecon -R <%= @homedir_path %>/${PAM_USER}"
+cmd="/sbin/restorecon -R $(getent passwd ${PAM_USER} | awk -F':' '{print $6}')"
 echo $cmd
 $cmd
