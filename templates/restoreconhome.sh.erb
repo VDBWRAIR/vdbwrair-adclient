@@ -5,6 +5,12 @@
 # This script uses getent as the home dir may be provided via winbind or other
 # external mechanism
 
-cmd="/sbin/restorecon -R $(getent passwd ${PAM_USER} | awk -F':' '{print $6}')"
-echo $cmd
-$cmd
+# The home directory
+homedir=$(getent passwd ${PAM_USER} | awk -F':' '{print $6}')
+
+# Check to see if already run so we don't restorecon -R again
+if [ ! -e ${homedir}/.restoreconrun ]
+then
+    # if .restoreconrun doesn't exist in users homedir
+    /sbin/restorecon -R ${homedir} && touch ${homedir}/.restoreconrun
+fi
