@@ -77,20 +77,24 @@ class adclient::config inherits adclient {
         notify  => Service['winbind']
     }
 
-    # Create smb_template_path up to the last component 
+    # Create smb_template_homedir up to the last component 
     $workgroup = split($::domain, '\.')[0].upcase
-    $pth = regsubst(
+    $homedir_path = regsubst(
                 regsubst($smb_template_homedir, '%D', $workgroup),
                 '%U', ''
     )
-    exec {"create_$pth":
-        command     => "/bin/mkdir -p ${pth}",
-        unless      => "/usr/bin/test -d ${pth}",
+    exec {"create_$homedir_path":
+        command     => "/bin/mkdir -p ${homedir_path}",
+        unless      => "/usr/bin/test -d ${homedir_path}",
         umask       => "0066",
-    	selrange	    => "s0",
-        selrole	    => "object_r",
-        seltype     => "home_root_t",
-        seluser     => "unconfined_u"
+    }
+    file {"/usr/local/bin":
+        ensure      => present,
+        path        => "/usr/local/bin/restoreconhome.sh",
+        owner       => root,
+        group       => root,
+        mode        => '0755',
+        content     => template('adclient/restoreconhome.sh.erb')
     }
 
     # Configuration for kerberos
