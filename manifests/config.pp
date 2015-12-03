@@ -88,9 +88,8 @@ class adclient::config inherits adclient {
         unless      => "/usr/bin/test -d ${homedir_path}",
         umask       => "0066",
     }
-    file {"/usr/local/bin":
+    file {"/usr/local/bin/restoreconhome.sh":
         ensure      => present,
-        path        => "/usr/local/bin/restoreconhome.sh",
         owner       => root,
         group       => root,
         mode        => '0755',
