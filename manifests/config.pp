@@ -87,10 +87,10 @@ class adclient::config inherits adclient {
         command     => "/bin/mkdir -p ${pth}",
         unless      => "/usr/bin/test -d ${pth}",
         umask       => "0066",
-	serange	    => "s0",
-	serole	    => "object_r",
-	seltype     => "home_root_t",
-	seluser     => "unconfined_u"
+    	selrange	    => "s0",
+        selrole	    => "object_r",
+        seltype     => "home_root_t",
+        seluser     => "unconfined_u"
     }
 
     # Configuration for kerberos
