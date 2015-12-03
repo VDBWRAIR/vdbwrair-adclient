@@ -18,7 +18,8 @@ password    required      pam_pkcs11.so
 
 session     optional      pam_keyinit.so revoke
 session     required      pam_limits.so
-session     optional      pam_oddjob_mkhomedir.so umask=0077
+session     optional      pam_mkhomedir.so
+session     optional      pam_exec.so debug log=/var/log/pam_exec_rconhomedir.log /usr/local/bin/restoreconhome.sh
 session     [success=1 default=ignore] pam_succeed_if.so service in crond quiet use_uid
 session     required      pam_unix.so
 session     optional      pam_krb5.so
