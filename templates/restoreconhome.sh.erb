@@ -1,3 +1,8 @@
 #!/bin/bash
+#
+# Script that will be run by pam_exec to ensure that
+# homedirs have correct selinux context
 
-/sbin/restorecon -R <%= @homedir_path %>
+cmd="/sbin/restorecon -R <%= @homedir_path %>/${PAM_USER}"
+echo $cmd
+$cmd
