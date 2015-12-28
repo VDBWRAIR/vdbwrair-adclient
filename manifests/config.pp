@@ -30,7 +30,7 @@ class adclient::config inherits adclient {
         # Schedule cron to renew machine kerb ticket
         cron { 'machine_kerberos_ticket_renew':
             ensure      => present,
-            command     => '/usr/bin/net ads kerberos renew -P',
+            command     => '/usr/bin/net ads kerberos kinit -P',
             hour        => '*/2',
             minute      => absent,
             month       => absent,
