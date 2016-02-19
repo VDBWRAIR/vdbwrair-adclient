@@ -114,13 +114,13 @@ class adclient::smartcard::config inherits adclient::smartcard {
         group   => root,
         mode    => '0644',
         ensure  => present,
-        source  => 'puppet:///modules/adclient/gdm-smartcard'
+        content => template("${module_name}/gdm-smartcard")
     }
     file {"/etc/pam.d/smartcard-auth":
         owner   => root,
         group   => root,
         mode    => '0644',
         ensure  => present,
-        source  => 'puppet:///modules/adclient/smartcard-auth'
+        content => template("${module_name}/smartcard-auth")
     }
 }

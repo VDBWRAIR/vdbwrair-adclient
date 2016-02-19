@@ -75,7 +75,8 @@ class adclient(
     $cn_map                    = $adclient::params::cn_map,
     $nssdb_path                = $adclient::params::nssdb_path,
     $cert_url                  = $adclient::params::cert_url,
-    $adcert_source               = $adclient::params::adcert_source
+    $adcert_source               = $adclient::params::adcert_source,
+    $provision_homedir         = $adclient::params::provision_homedir,
 ) inherits adclient::params {
     include stdlib
 

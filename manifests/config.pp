@@ -88,12 +88,15 @@ class adclient::config inherits adclient {
         unless      => "/usr/bin/test -d ${homedir_path}",
         umask       => "0066",
     }
-    file {"/usr/local/bin/restoreconhome.sh":
-        ensure      => present,
-        owner       => root,
-        group       => root,
-        mode        => '0755',
-        content     => template('adclient/restoreconhome.sh.erb')
+
+    if $::provision_homedir {
+        file {"/usr/local/bin/restoreconhome.sh":
+            ensure      => present,
+            owner       => root,
+            group       => root,
+            mode        => '0755',
+            content     => template('adclient/restoreconhome.sh.erb')
+        }
     }
 
     # Configuration for kerberos
@@ -109,7 +112,7 @@ class adclient::config inherits adclient {
         owner => root,
         group => root,
         mode => '0644',
-        source => 'puppet:///modules/adclient/system-auth-local'
+        content => template("${module_name}/system-auth-local")
     }
 
     file { '/etc/pam.d/system-auth':
@@ -121,7 +124,7 @@ class adclient::config inherits adclient {
         owner => root,
         group => root,
         mode => '0644',
-        source => 'puppet:///modules/adclient/password-auth-local'
+        content => template("${module_name}/password-auth-local")
     }
 
     file { '/etc/pam.d/password-auth':

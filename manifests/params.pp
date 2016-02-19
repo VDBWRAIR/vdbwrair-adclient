@@ -82,4 +82,6 @@ class adclient::params {
     # This is the path to the adcert.pem file that contains all cert chains
     # leading from smartcard to AD
     $adcert_source                     = 'puppet:///modules/adclient/adcerts.pem'
+    # To use pam_mkhomedir and execute restoreconhome.sh
+    $provision_homedir               = true
 }
