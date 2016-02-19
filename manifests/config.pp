@@ -112,7 +112,7 @@ class adclient::config inherits adclient {
         owner => root,
         group => root,
         mode => '0644',
-        content => template("${module_name}/system-auth-local")
+        content => template("${module_name}/system-auth-local.erb")
     }
 
     file { '/etc/pam.d/system-auth':
@@ -124,7 +124,7 @@ class adclient::config inherits adclient {
         owner => root,
         group => root,
         mode => '0644',
-        content => template("${module_name}/password-auth-local")
+        content => template("${module_name}/password-auth-local.erb")
     }
 
     file { '/etc/pam.d/password-auth':
