@@ -110,6 +110,7 @@ class adclient::smartcard::config inherits adclient::smartcard {
     }
 
     file {"/etc/pam.d/gdm-smartcard":
+        ensure  => file,
         owner   => root,
         group   => root,
         mode    => '0644',
@@ -117,6 +118,7 @@ class adclient::smartcard::config inherits adclient::smartcard {
         content => template("${module_name}/gdm-smartcard.erb")
     }
     file {"/etc/pam.d/smartcard-auth":
+        ensure  => file,
         owner   => root,
         group   => root,
         mode    => '0644',

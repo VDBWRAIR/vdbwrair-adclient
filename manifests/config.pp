@@ -109,6 +109,7 @@ class adclient::config inherits adclient {
     }
 
     file { '/etc/pam.d/system-auth-local':
+        ensure => file,
         owner => root,
         group => root,
         mode => '0644',
@@ -121,6 +122,7 @@ class adclient::config inherits adclient {
     }
 
     file { '/etc/pam.d/password-auth-local':
+        ensure => file,
         owner => root,
         group => root,
         mode => '0644',
