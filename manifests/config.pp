@@ -89,7 +89,7 @@ class adclient::config inherits adclient {
         umask       => "0066",
     }
 
-    if $::provision_homedir {
+    if $adclient::provision_homedir {
         file {"/usr/local/bin/restoreconhome.sh":
             ensure      => present,
             owner       => root,
